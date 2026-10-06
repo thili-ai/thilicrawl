@@ -1,0 +1,38 @@
+name: ci
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+jobs:
+  gate:
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        python-version: ["3.11", "3.12", "3.13"]
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: astral-sh/setup-uv@v5
+        with:
+          enable-cache: true
+
+      - name: Install (exactly what uv.lock says)
+        run: uv sync --extra dev --frozen --python ${{ matrix.python-version }}
+
+      # The gate. From here on, every drill in the track must keep all four green.
+      - name: Lint
+        run: uv run --frozen ruff check .
+
+      - name: Format
+        run: uv run --frozen ruff format --check .
+
+      - name: Types (mypy --strict, source and tests)
+        run: uv run --frozen mypy
+
+      - name: Tests (with a coverage floor of 90%)
+        run: uv run --frozen pytest --cov --cov-fail-under=90
+        # The tests start real servers and a real subprocess, so Windows and macOS are worth a look too:
+        # add them to ``runs-on`` as a matrix axis once the Ubuntu run is green.
