@@ -38,6 +38,21 @@ async def test_one_busy_host_does_not_block_another() -> None:
     await slow
 
 
+async def test_a_task_waiting_for_its_host_does_not_hold_a_global_slot() -> None:
+    """Lock order: the narrow resource (the host's slot) first, the broad one (a global slot) second.
+
+    Taken the other way round, tasks queued behind a busy host sit on global slots doing nothing, and a
+    perfectly idle host cannot get one.
+    """
+    limiter = HostLimiter(concurrency=2, per_host=1)
+    busy = [asyncio.create_task(hold(limiter, "busy.test", seconds=0.3)) for _ in range(3)]
+    await asyncio.sleep(0.02)  # one is running; the other two are waiting for busy.test's single slot
+    started = asyncio.get_running_loop().time()
+    await hold(limiter, "idle.test", seconds=0.01)
+    assert asyncio.get_running_loop().time() - started < 0.15  # did not queue behind busy.test's backlog
+    await asyncio.gather(*busy)
+
+
 async def test_a_slot_is_released_when_the_work_inside_it_fails() -> None:
     limiter = HostLimiter(concurrency=1, per_host=1)
     with pytest.raises(RuntimeError):
