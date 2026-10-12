@@ -124,3 +124,5 @@ ruff check . && ruff format --check . && mypy && pytest --cov
 ```
 
 CI runs the same gate on Python 3.11, 3.12 and 3.13. MIT licensed.
+
+Built lesson by lesson in the Learn Fast drill *Async Python: a Concurrent Link Checker*, at [ask.thili.ai](https://ask.thili.ai).
