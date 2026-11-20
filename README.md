@@ -3,7 +3,7 @@
 A concurrent link checker: point it at a site and it tells you every broken, looping, slow or
 unreachable link — checking hundreds of URLs at once without overwhelming anyone.
 
-The reference implementation for the **Learn Fast** drill *Async Python: a Concurrent Link Checker*
+The reference implementation for the **askThili** drill *Async Python: a Concurrent Link Checker*
 (`lfpython-lfcrawl`). It is small enough to read in an afternoon and honest enough to learn from: the
 numbers below were measured, and the design notes say where `asyncio` is the wrong tool.
 
@@ -125,4 +125,4 @@ ruff check . && ruff format --check . && mypy && pytest --cov
 
 CI runs the same gate on Python 3.11, 3.12 and 3.13. MIT licensed.
 
-Built lesson by lesson in the Learn Fast drill *Async Python: a Concurrent Link Checker*, at [ask.thili.ai](https://ask.thili.ai).
+Built lesson by lesson in the askThili drill *Async Python: a Concurrent Link Checker*, at [ask.thili.ai](https://ask.thili.ai).
